@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Products</h1>
+
+    {% if user.is_authenticated %}
+        <p>Welcome, {{ user.username }}!</p>
+        {% endif %}
+
+
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                {% load static %}
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                {% else %}
+                    <img src="{% static 'img/placeholder.png' %}" class="card-img-top" alt="No image">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+                    <p class="card-text"><strong>${{ product.price }}</strong></p>
+                  
+                    <div class="d-flex gap-2">
+                      <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                  
+                      {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'add_to_basket' product.id %}" class="m-0">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-sm btn-outline-success">Add to Basket</button>
+                        </form>
+                      {% endif %}
+                    </div>
+                  </div>
+            </div>
+        </div>
+        {% empty %}
+            <p>No products available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

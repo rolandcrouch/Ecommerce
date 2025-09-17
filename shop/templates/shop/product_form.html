@@ -1,0 +1,108 @@
+{# shop/templates/shop/product_form.html #}
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4" style="max-width: 600px;">
+  <h2 class="mb-3">
+    {% if form.instance.pk %}Edit product{% else %}Add product{% endif %}
+    {% if store %}<small class="text-muted d-block">Store: {{ store.name }}</small>{% endif %}
+  </h2>
+
+<form method="post" enctype="multipart/form-data" class="needs-validation">
+{% csrf_token %}
+
+{# Name #}
+<div class="mb-3">
+  <label for="{{ form.name.id_for_label }}" class="form-label">Name</label>
+  <input
+    type="text"
+    name="{{ form.name.html_name }}"
+    class="form-control"
+    id="{{ form.name.id_for_label }}"
+    value="{{ form.name.value|default_if_none:'' }}"
+  >
+  {% if form.name.errors %}
+    <div class="text-danger">{{ form.name.errors.0 }}</div>
+  {% endif %}
+</div>
+
+{# Description #}
+<div class="mb-3">
+  <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+  <textarea
+    name="{{ form.description.html_name }}"
+    class="form-control"
+    id="{{ form.description.id_for_label }}"
+    rows="4"
+  >{{ form.description.value|default_if_none:'' }}</textarea>
+  {% if form.description.errors %}
+    <div class="text-danger">{{ form.description.errors.0 }}</div>
+  {% endif %}
+</div>
+
+{# Price #}
+<div class="mb-3">
+  <label for="{{ form.price.id_for_label }}" class="form-label">Price</label>
+  <input
+    type="number"
+    name="{{ form.price.html_name }}"
+    class="form-control"
+    id="{{ form.price.id_for_label }}"
+    value="{{ form.price.value|default_if_none:'' }}"
+    step="0.01" min="0"
+  >
+  {% if form.price.errors %}
+    <div class="text-danger">{{ form.price.errors.0 }}</div>
+  {% endif %}
+</div>
+
+{# Stock #}
+<div class="mb-3">
+  <label for="{{ form.stock.id_for_label }}" class="form-label">Stock</label>
+  <input
+    type="number"
+    name="{{ form.stock.html_name }}"
+    class="form-control"
+    id="{{ form.stock.id_for_label }}"
+    value="{{ form.stock.value|default_if_none:'' }}"
+    min="0" step="1"
+  >
+  {% if form.stock.errors %}
+    <div class="text-danger">{{ form.stock.errors.0 }}</div>
+  {% endif %}
+</div>
+
+{# Image #}
+<div class="mb-3">
+  <label for="{{ form.image.id_for_label }}" class="form-label">Image</label>
+  <input
+    type="file"
+    name="{{ form.image.html_name }}"
+    class="form-control"
+    id="{{ form.image.id_for_label }}"
+  >
+  {% if form.image.errors %}
+    <div class="text-danger">{{ form.image.errors.0 }}</div>
+  {% endif %}
+
+  {# existing preview when editing #}
+  {% if form.instance.pk and form.instance.image %}
+    <div class="mt-2">
+      <img src="{{ form.instance.image.url }}" alt="{{ form.instance.name }}" class="img-thumbnail" style="max-height: 140px;">
+    </div>
+
+    {# 4) Remove image checkbox — add here #}
+    <div class="form-check mt-2">
+      <input class="form-check-input" type="checkbox" id="id_remove_image" name="remove_image">
+      <label class="form-check-label" for="id_remove_image">Remove image</label>
+    </div>
+  {% endif %}
+  <div class="d-grid gap-2 mt-3">
+    <button type="submit" class="btn btn-primary w-100">
+      {% if form.instance.pk %}Save changes{% else %}Create product{% endif %}
+    </button>
+    {% if store %}
+      <a class="btn btn-outline-secondary w-100" href="{% url 'store_products' store.pk %}">Cancel</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <body style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; line-height:1.5;">
+    <h2 style="margin:0 0 8px;">Invoice {{ invoice_no }}</h2>
+    <div style="color:#666; font-size:14px; margin-bottom:16px;">
+      {{ site_name }} • {{ generated_at|date:"Y-m-d H:i" }}
+    </div>
+
+    <p>Hi {{ user.first_name|default:user.username }},</p>
+    <p>Thanks for your purchase. Here’s your invoice:</p>
+
+    <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse; margin:12px 0;">
+      <thead>
+        <tr style="background:#f4f4f4;">
+          <th align="left">Product</th>
+          <th align="center">Qty</th>
+          <th align="right">Price</th>
+          <th align="right">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+          <tr style="border-top:1px solid #e7e7e7;">
+            <td>{{ item.product.name }}</td>
+            <td align="center">{{ item.quantity }}</td>
+            <td align="right">${{ item.price }}</td>
+            <td align="right">${{ item.total_price }}</td>
+          </tr>
+        {% endfor %}
+        <tr style="border-top:2px solid #000;">
+          <td colspan="3" align="right" style="font-weight:bold;">Total</td>
+          <td align="right" style="font-weight:bold;">{{ currency }}{{ total }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="color:#666; font-size:14px;">If you have any questions, just reply to this email.</p>
+    <p>— {{ site_name }}</p>
+  </body>
+</html>

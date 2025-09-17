@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Add Store{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 600px;">
+  <h2 class="mb-4 text-center">Create a New Store</h2>
+
+  {% if form.errors or form.non_field_errors %}
+  <div class="alert alert-danger">
+    <strong>We couldn't create your store.</strong>
+    <ul class="mb-0">
+      {% for field in form %}
+        {% for e in field.errors %}
+          <li><strong>{{ field.label }}:</strong> {{ e }}</li>
+        {% endfor %}
+      {% endfor %}
+      {% for e in form.non_field_errors %}
+        <li>{{ e }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+  <form method="post" class="needs-validation">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    {# Store Name #}
+    <div class="mb-3">
+      <label for="{{ form.name.id_for_label }}" class="form-label">Store name</label>
+      <input
+        type="text"
+        name="{{ form.name.html_name }}"
+        id="{{ form.name.id_for_label }}"
+        class="form-control"
+        value="{{ form.name.value|default_if_none:'' }}"
+        {% if form.store_name.field.required %}required{% endif %}
+        maxlength="255"
+        autocomplete="organization"
+      >
+      {% for e in form.name.errors %}<div class="text-danger">{{ e }}</div>{% endfor %}
+      {% if form.name.help_text %}<div class="form-text">{{ form.name.help_text|safe }}</div>{% endif %}
+    </div>
+
+    {# Bio #}
+    <div class="mb-3">
+      <label for="{{ form.bio.id_for_label }}" class="form-label">Bio</label>
+      <textarea
+        name="{{ form.bio.html_name }}"
+        id="{{ form.bio.id_for_label }}"
+        class="form-control"
+        rows="4"
+        {% if form.bio.field.required %}required{% endif %}
+      >{{ form.bio.value|default_if_none:'' }}</textarea>
+      {% for e in form.bio.errors %}<div class="text-danger">{{ e }}</div>{% endfor %}
+      {% if form.bio.help_text %}<div class="form-text">{{ form.bio.help_text|safe }}</div>{% endif %}
+    </div>
+
+    <div class="d-grid gap-2">
+      <button class="btn btn-primary" type="submit">Create Store</button>
+      <a href="{% url 'vendor_store_list' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-5" style="max-width: 500px;">
+  <h2 class="mb-4 text-center">Register as {{ role|title }}</h2>
+
+  <form method="post" class="needs-validation">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    {# Username #}
+    <div class="mb-3">
+      <label for="{{ form.username.id_for_label }}" class="form-label">
+        {{ form.username.label }}
+      </label>
+      <input
+        type="text"
+        name="{{ form.username.html_name }}"
+        id="{{ form.username.id_for_label }}"
+        class="form-control"
+        value="{{ form.username.value|default_if_none:'' }}"
+        {% if form.username.field.required %}required{% endif %}
+        autocomplete="username"
+      >
+      {% for e in form.username.errors %}
+        <div class="text-danger">{{ e }}</div>
+      {% endfor %}
+      {% if form.username.help_text %}
+        <div class="form-text">{{ form.username.help_text|safe }}</div>
+      {% endif %}
+    </div>
+
+    {# Email #}
+    <div class="mb-3">
+      <label for="{{ form.email.id_for_label }}" class="form-label">
+        {{ form.email.label|default:"Email" }}
+      </label>
+      <input
+        type="email"
+        name="{{ form.email.html_name|default:'email' }}"
+        id="{{ form.email.id_for_label|default:'id_email' }}"
+        class="form-control"
+        value="{{ form.email.value|default_if_none:'' }}"
+        {% if form.email and form.email.field.required %}required{% endif %}
+        autocomplete="email"
+      >
+      {% if form.email %}
+        {% for e in form.email.errors %}
+          <div class="text-danger">{{ e }}</div>
+        {% endfor %}
+        {% if form.email.help_text %}
+          <div class="form-text">{{ form.email.help_text|safe }}</div>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    {# Password #}
+    <div class="mb-3">
+      <label for="{{ form.password1.id_for_label }}" class="form-label">
+        {{ form.password1.label }}
+      </label>
+      <input
+        type="password"
+        name="{{ form.password1.html_name }}"
+        id="{{ form.password1.id_for_label }}"
+        class="form-control"
+        {% if form.password1.field.required %}required{% endif %}
+        autocomplete="new-password"
+      >
+      {% for e in form.password1.errors %}
+        <div class="text-danger">{{ e }}</div>
+      {% endfor %}
+      {% if form.password1.help_text %}
+        <div class="form-text">{{ form.password1.help_text|safe }}</div>
+      {% endif %}
+    </div>
+
+    {# Confirm Password #}
+    <div class="mb-3">
+      <label for="{{ form.password2.id_for_label }}" class="form-label">
+        {{ form.password2.label }}
+      </label>
+      <input
+        type="password"
+        name="{{ form.password2.html_name }}"
+        id="{{ form.password2.id_for_label }}"
+        class="form-control"
+        {% if form.password2.field.required %}required{% endif %}
+        autocomplete="new-password"
+      >
+      {% for e in form.password2.errors %}
+        <div class="text-danger">{{ e }}</div>
+      {% endfor %}
+      {% if form.password2.help_text %}
+        <div class="form-text">{{ form.password2.help_text|safe }}</div>
+      {% endif %}
+    </div>
+
+    {# Vendor-only fields #}
+    {% if role == "vendor" %}
+      {% include "shop/vendor_fields.html" %}
+    {% endif %}
+    
+    <button class="btn btn-primary w-100">Create {{ role|title }} Account</button>
+  </form>
+
+  <div class="mt-3 text-center">
+    {% if role == "vendor" %}
+      <a href="{% url 'register_customer' %}">Register as a customer instead</a>
+    {% else %}
+      <a href="{% url 'register_vendor' %}">Register as a vendor instead</a>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

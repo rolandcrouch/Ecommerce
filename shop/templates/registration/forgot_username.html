@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Forgot your Username?</h2>
+    <p class="text-center">Enter your email address and we’ll send you your username.</p>
+
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            Please enter a valid email address.
+        </div>
+    {% endif %}
+
+    <form method="post" class="mx-auto" style="max-width: 400px;">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div class="text-danger">{{ form.email.errors.0 }}</div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Send Username</button>
+    </form>
+
+    <p class="text-center mt-3">
+        <a href="{% url 'login' %}">Back to Login</a>
+    </p>
+</div>
+{% endblock %}

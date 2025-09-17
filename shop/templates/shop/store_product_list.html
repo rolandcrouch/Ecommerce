@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4" style="max-width:960px;">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">{{ store.name }}</h2>
+    <a class="btn btn-primary" href="{% url 'product_add' store.pk %}">Add product</a>
+  </div>
+
+  {% if products %}
+  <table class="table align-middle">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th class="text-centre">Price</th>
+        <th class="text-centre">Stock</th>
+        <th class="text-end">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+      <tr>
+        <td>{{ p.name }}</td>
+        <td class="text-center">${{ p.price }}</td>
+        <td class="text-center">{{ p.stock|default:0 }}</td>
+        <td class="text-end">
+          <div class="d-inline-flex gap-2 align-items-center">
+            <a href="{% url 'product_detail' p.pk %}" class="btn btn-sm btn-outline-secondary">View</a>
+            <a href="{% url 'product_edit' store_pk=store.pk pk=p.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+            <form method="post" action="{% url 'product_delete' store_pk=store.pk pk=p.pk %}" class="m-0">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-outline-danger"
+                      onclick="return confirm('Delete {{ p.name|escapejs }}?')">
+                Delete
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" class="text-center text-muted">No products yet.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="alert alert-info">No products yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

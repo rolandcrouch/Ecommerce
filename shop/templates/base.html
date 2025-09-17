@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Vendor Marketplace{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            margin-top: 2rem;
+        }
+
+        footer {
+            margin-top: 4rem;
+            padding: 1rem 0;
+            background-color: #efefef;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+  
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{% url 'product_list' %}">Ecommerce</a>
+      
+          <div class="d-flex align-items-center">
+            <a href="{% url 'basket_detail' %}" class="btn btn-outline-success me-3">
+              🛒 Basket
+              {% if basket and basket|length > 0 %}
+                <span class="badge bg-danger">{{ basket|length }}</span>
+              {% endif %}
+            </a>
+      
+            {% if user.is_authenticated %}
+              <span class="navbar-text me-3">Hello, {{ user.username }}</span>
+      
+              <!-- Keep logout form isolated -->
+              <form id="logout-form" method="post" action="{% url 'logout' %}" class="d-inline me-2" novalidate>
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger"
+                        form="logout-form" formnovalidate>
+                  Logout
+                </button>
+              </form>
+              
+      
+              <!-- Move this OUTSIDE the form -->
+              <a class="btn btn-outline-secondary" href="{% url 'vendor_store_list' %}">My stores</a>
+            {% else %}
+              <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
+              <a href="{% url 'register_customer' %}" class="btn btn-outline-secondary">Register</a>
+            {% endif %}
+          </div>
+        </div>
+      </nav>    
+
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+<footer>
+    <div class="container">
+        <p>&copy; {{ year|default:2025 }} eCommerce</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

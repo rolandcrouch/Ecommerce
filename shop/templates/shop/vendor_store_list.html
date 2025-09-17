@@ -1,0 +1,34 @@
+{# templates/shop/vendor_store_list.html #}
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4" style="max-width:960px;">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">My stores</h2>
+    <a class="btn btn-primary" href="{% url 'store_add' %}">Add store</a>
+  </div>
+
+  {% if stores %}
+    <div class="list-group">
+      {% for s in stores %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <a class="text-decoration-none flex-grow-1" href="{% url 'store_products' s.pk %}">
+            <strong>{{ s.name }}</strong>
+            {% if s.bio %}<br><small class="text-muted">{{ s.bio }}</small>{% endif %}
+          </a>
+          <a class="btn btn-sm btn-outline-primary me-2" href="{% url 'product_add' s.pk %}">
+            Add product
+          </a>
+          <a class="btn btn-sm btn-outline-secondary me-2" href="{% url 'store_edit' s.pk %}">Edit</a> 
+          <form method="post" action="{% url 'store_delete' s.pk %}" class="d-inline"
+          data-confirm="Delete '{{ s.name|escapejs }}'? This cannot be undone.">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+        </form>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">You have no stores yet. <a href="{% url 'store_add' %}">Create one</a>.</div>
+  {% endif %}
+</div>
+{% endblock %}

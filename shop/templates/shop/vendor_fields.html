@@ -1,0 +1,28 @@
+{# templates/shop/vendor_fields.html #}
+
+<div class="mb-3">
+    <label for="{{ form.vendor_name.id_for_label }}" class="form-label">Vendor name</label>
+    <input
+      type="text"
+      name="{{ form.vendor_name.html_name }}"
+      id="{{ form.vendor_name.id_for_label }}"
+      class="form-control"
+      value="{{ form.vendor_name.value|default_if_none:'' }}"
+      {% if form.vendor_name.field.required %}required{% endif %}
+      maxlength="255"
+    >
+    {% for e in form.store_name.errors %}<div class="text-danger">{{ e }}</div>{% endfor %}
+  </div>
+  
+  <div class="mb-3">
+    <label for="{{ form.bio.id_for_label }}" class="form-label">Bio</label>
+    <textarea
+      name="{{ form.bio.html_name }}"
+      id="{{ form.bio.id_for_label }}"
+      class="form-control"
+      rows="4"
+      {% if form.bio.field.required %}required{% endif %}
+    >{{ form.bio.value|default_if_none:'' }}</textarea>
+    {% for e in form.bio.errors %}<div class="text-danger">{{ e }}</div>{% endfor %}
+    {% if form.bio.help_text %}<div class="form-text">{{ form.bio.help_text|safe }}</div>{% endif %}
+  </div>
