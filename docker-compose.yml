@@ -1,0 +1,63 @@
+# Docker Compose file for Django ecommerce application
+# Copy env.template to .env and customize before running
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: ecommerce_mysql
+    environment:
+      MYSQL_DATABASE: ${DATABASE_NAME:-myproject_db}
+      MYSQL_USER: ${DATABASE_USER:-myproject_user}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD:-defaultpassword}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+    ports:
+      - "${DATABASE_EXTERNAL_PORT:-3307}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - ecommerce_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    restart: unless-stopped
+
+  web:
+    build: .
+    # Uncomment to use pre-built image from Docker Hub:
+    # image: rolandcrouch/django-ecommerce:latest
+    container_name: ecommerce_django
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=3306
+      - DATABASE_NAME=${DATABASE_NAME:-myproject_db}
+      - DATABASE_USER=${DATABASE_USER:-myproject_user}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-defaultpassword}
+      - SECRET_KEY=${SECRET_KEY:-django-insecure-change-me-in-production}
+      - DEBUG=${DEBUG:-False}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      - EMAIL_HOST=${EMAIL_HOST:-smtp.gmail.com}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER:-}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD:-}
+      - SITE_NAME=${SITE_NAME:-eCommerce}
+      - TWITTER_ENABLED=${TWITTER_ENABLED:-False}
+      - DJANGO_SETTINGS_MODULE=ecommerce.settings
+    ports:
+      - "${WEB_PORT:-8000}:8000"
+    volumes:
+      - ./media:/app/media
+      - ./staticfiles:/app/staticfiles
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+    restart: unless-stopped
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+volumes:
+  mysql_data:
+
+networks:
+  ecommerce_network:
+    driver: bridge
